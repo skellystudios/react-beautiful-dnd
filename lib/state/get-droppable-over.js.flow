@@ -128,13 +128,12 @@ export default ({
   droppables,
   previousDroppableOverId,
 }: Args): ?DroppableId => {
-  
-  const maybeList: DroppableDimension[] =
+  const maybe: ?DroppableDimension =
     Object.keys(droppables)
       .map((id: DroppableId): DroppableDimension => droppables[id])
       // only want enabled droppables
       .filter((droppable: DroppableDimension) => droppable.isEnabled)
-      .filter((droppable: DroppableDimension): boolean => {
+      .find((droppable: DroppableDimension): boolean => {
         // If previously dragging over a droppable we give it a
         // bit of room on the subsequent drags so that user and move
         // items in the space that the placeholder takes up
@@ -152,17 +151,6 @@ export default ({
         // if it is over the droppable - not its internal impact
         return isPositionInFrame(withPlaceholder)(target);
       });
-
-  maybeList.sort((a, b) => {
-    if (a.client.withoutMargin.width < b.client.withoutMargin.width &&
-            a.client.withoutMargin.height < b.client.withoutMargin.height) {
-      return -1;
-    }
-    return 1;
-  });
-
-  // if (maybeList.length > 1) {}
-  const maybe: ?DroppableDimension = maybeList[0];
 
   return maybe ? maybe.descriptor.id : null;
 };
