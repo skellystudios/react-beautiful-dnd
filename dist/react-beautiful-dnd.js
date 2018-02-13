@@ -3077,11 +3077,11 @@ exports.default = function (_ref2) {
       droppables = _ref2.droppables,
       previousDroppableOverId = _ref2.previousDroppableOverId;
 
-  var maybe = (0, _keys2.default)(droppables).map(function (id) {
+  var maybeList = (0, _keys2.default)(droppables).map(function (id) {
     return droppables[id];
   }).filter(function (droppable) {
     return droppable.isEnabled;
-  }).find(function (droppable) {
+  }).filter(function (droppable) {
     var withPlaceholder = getClippedAreaWithPlaceholder({
       draggable: draggable, draggables: draggables, droppable: droppable, previousDroppableOverId: previousDroppableOverId
     });
@@ -3092,6 +3092,15 @@ exports.default = function (_ref2) {
 
     return (0, _isPositionInFrame2.default)(withPlaceholder)(target);
   });
+
+  maybeList.sort(function (a, b) {
+    if (a.client.withoutMargin.width < b.client.withoutMargin.width && a.client.withoutMargin.height < b.client.withoutMargin.height) {
+      return -1;
+    }
+    return 1;
+  });
+
+  var maybe = maybeList[0];
 
   return maybe ? maybe.descriptor.id : null;
 };
